@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useEditorState } from '../../store/editorStore';
-import { MdSave, MdSend, MdPreview, MdArrowBack } from 'react-icons/md';
+import { MdSave, MdSend, MdPreview, MdArrowBack, MdLibraryAdd, MdTableChart, MdPeople } from 'react-icons/md';
+import Library from '../library/Library';
+import CsvUpload from '../library/CsvUpload';
+import CollaboratorModal from '../library/CollaboratorModal';
 
 const Header: React.FC = () => {
   const { selectedNode, hierarchy } = useEditorState();
+  const [showLibrary, setShowLibrary] = useState(false);
+  const [showCsv, setShowCsv] = useState(false);
+  const [showCollaborators, setShowCollaborators] = useState(false);
 
   return (
     <div className="flex flex-col w-full shadow-sm">
@@ -29,20 +35,46 @@ const Header: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 border border-primary text-primary hover:bg-primary-light rounded-md transition-all text-sm font-semibold">
+          <button
+            onClick={() => setShowCollaborators(true)}
+            className="p-2.5 text-gray-400 hover:text-primary hover:bg-primary-light rounded-xl transition-all shadow-sm border"
+            title="Manage Collaborators"
+          >
+            <MdPeople size={22} />
+          </button>
+          <button
+            onClick={() => setShowCsv(true)}
+            className="flex items-center gap-2 px-4 py-2 border border-gray-200 text-gray-600 hover:bg-gray-50 rounded-xl transition-all text-sm font-bold shadow-sm"
+          >
+            <MdTableChart size={20} className="text-emerald-500" />
+            Bulk Actions
+          </button>
+          <button
+            onClick={() => setShowLibrary(true)}
+            className="flex items-center gap-2 px-4 py-2 border border-gray-200 text-gray-600 hover:bg-gray-50 rounded-xl transition-all text-sm font-bold shadow-sm"
+          >
+            <MdLibraryAdd size={20} className="text-primary" />
+            Add from Library
+          </button>
+          <div className="h-6 w-px bg-gray-200 mx-2" />
+          <button className="flex items-center gap-2 px-4 py-2 border border-primary text-primary hover:bg-primary-light rounded-xl transition-all text-sm font-bold shadow-sm">
             <MdPreview size={20} />
             Preview
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 border border-primary text-primary hover:bg-primary-light rounded-md transition-all text-sm font-semibold">
+          <button className="flex items-center gap-2 px-4 py-2 border border-primary text-primary hover:bg-primary-light rounded-xl transition-all text-sm font-bold shadow-sm">
             <MdSave size={20} />
-            Save as Draft
+            Save Draft
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white hover:bg-primary-dark rounded-md transition-all text-sm font-semibold shadow-sm">
+          <button className="flex items-center gap-2 px-6 py-2 bg-primary text-white hover:bg-primary-dark rounded-xl transition-all text-sm font-bold shadow-lg active:scale-95">
             <MdSend size={20} />
             Submit
           </button>
         </div>
       </div>
+
+      {showLibrary && <Library onClose={() => setShowLibrary(false)} />}
+      {showCsv && <CsvUpload onClose={() => setShowCsv(false)} />}
+      {showCollaborators && <CollaboratorModal onClose={() => setShowCollaborators(false)} />}
     </div>
   );
 };

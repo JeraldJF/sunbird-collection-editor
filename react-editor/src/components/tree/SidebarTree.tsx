@@ -4,6 +4,7 @@ import { useEditorState, setSelectedNode, addNode, deleteNode } from '../../stor
 import { MdFolder, MdInsertDriveFile, MdChevronRight, MdKeyboardArrowDown, MdAdd, MdDelete } from 'react-icons/md';
 import { clsx } from 'clsx';
 import { v4 as uuidv4 } from 'uuid';
+import type { Node } from '../../types';
 
 const SidebarTree: React.FC = () => {
   const { hierarchy } = useEditorState();
@@ -16,7 +17,7 @@ const SidebarTree: React.FC = () => {
         <h2 className="text-sm font-bold uppercase tracking-wider text-gray-500">Structure</h2>
       </div>
       <div className="flex-1 overflow-auto p-2">
-        <Tree
+        <Tree<Node>
           initialData={data}
           openByDefault={true}
           width={300}
@@ -25,7 +26,6 @@ const SidebarTree: React.FC = () => {
           rowHeight={36}
           onSelect={(nodes) => {
             if (nodes.length > 0) {
-               // @ts-ignore
               setSelectedNode(nodes[0].data);
             }
           }}
@@ -37,7 +37,7 @@ const SidebarTree: React.FC = () => {
   );
 };
 
-const NodeRenderer = ({ node, style, dragHandle }: { node: NodeApi<any>, style: React.CSSProperties, dragHandle?: any }) => {
+const NodeRenderer = ({ node, style, dragHandle }: { node: NodeApi<Node>, style: React.CSSProperties, dragHandle?: any }) => {
   const isSelected = node.isSelected;
   const isFolder = !node.isLeaf;
 
