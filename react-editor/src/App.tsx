@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import Header from './components/header/Header';
 import SidebarTree from './components/tree/SidebarTree';
 import MetaForm from './components/form/MetaForm';
+import SunbirdPlayer from './components/players/SunbirdPlayer';
 import { useEditorState, setHierarchy, setConfig } from './store/editorStore';
 import { mockHierarchy } from './services/mockData';
 
@@ -32,8 +33,20 @@ function App() {
       <Header />
       <div className="flex flex-1 overflow-hidden">
         <SidebarTree />
-        <main className="flex-1 overflow-auto bg-white border-l">
-          <MetaForm />
+        <main className="flex-1 overflow-hidden bg-white border-l flex flex-col">
+          <div className="flex-1 overflow-auto p-4 border-b">
+            <SunbirdPlayer
+                playerElement="sunbird-pdf-player"
+                playerConfig={{
+                    context: {},
+                    config: {},
+                    metadata: { name: 'Preview Content' }
+                }}
+            />
+          </div>
+          <div className="flex-1 overflow-auto">
+            <MetaForm />
+          </div>
         </main>
       </div>
     </div>

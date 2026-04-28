@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import { useEditorState, setSelectedNode, addNode, deleteNode } from '../../store/editorStore';
+import { useEditorState, setSelectedNode, addNode, deleteNode, moveNode, addSibling } from '../../store/editorStore';
 import { Tree, type NodeApi } from 'react-arborist';
 import { MdFolder, MdInsertDriveFile, MdChevronRight, MdKeyboardArrowDown, MdAdd, MdDelete, MdMoreVert } from 'react-icons/md';
 import { clsx } from 'clsx';
 import { v4 as uuidv4 } from 'uuid';
 import type { Node } from '../../types';
 import Library from '../library/Library';
+import CsvUpload from '../library/CsvUpload';
 
 const SidebarTree: React.FC = () => {
-  const { hierarchy } = useEditorState();
+  const { hierarchy, selectedNode } = useEditorState();
   const [showLibrary, setShowLibrary] = useState(false);
+  const [showCsv, setShowCsv] = useState(false);
 
   const data = hierarchy ? [hierarchy] : [];
 
@@ -17,13 +19,13 @@ const SidebarTree: React.FC = () => {
     <div className="w-64 border-r bg-gray-50 h-full overflow-hidden flex flex-col">
       <div className="p-4 border-b bg-white flex justify-between items-center">
         <h2 className="text-sm font-medium text-gray-700">Folders</h2>
-        <div className="text-[#00529b] cursor-pointer">
+        <div className="text-[#00529b] cursor-pointer" onClick={() => setShowCsv(true)}>
           <MdMoreVert size={20} />
         </div>
       </div>
       <div className="flex-1 overflow-auto p-2">
         <Tree<Node>
-          initialData={data}
+          data={data}
           openByDefault={true}
           width={300}
           height={600}
@@ -34,6 +36,9 @@ const SidebarTree: React.FC = () => {
               setSelectedNode(nodes[0].data);
             }
           }}
+          onMove={({ dragIds, parentId, index }) => {
+            moveNode(dragIds[0], parentId, index);
+          }}
         >
           {NodeRenderer}
         </Tree>
@@ -43,12 +48,9 @@ const SidebarTree: React.FC = () => {
         <div className="flex-1 flex divide-x border-r h-full">
             <button
                 onClick={() => {
-                    const targetId = selectedNode?.id || hierarchy?.id;
-                    if (!targetId) return;
+                    const referenceId = selectedNode?.id;
+                    if (!referenceId) return;
 
-                    // Logic to find parent for "Sibling"
-                    // For simplicity in this mock, we add to hierarchy root if nothing selected
-                    // In a real app, we'd traverse to find parent.
                     const newUnit = {
                         id: uuidv4(),
                         name: 'New Unit',
@@ -57,11 +59,10 @@ const SidebarTree: React.FC = () => {
                         children: []
                     };
 
-                    // Adding as sibling of selected or child of root
-                    addNode(hierarchy?.id || 'root', newUnit);
+                    addSibling(referenceId, newUnit);
                 }}
                 className="flex-1 flex items-center justify-center gap-1 px-2 text-[#00529b] hover:bg-gray-50 text-[11px] font-medium transition-all disabled:opacity-50"
-                disabled={!hierarchy}
+                disabled={!selectedNode || selectedNode.id === hierarchy?.id}
             >
                 <MdAdd size={16} className="text-[#00529b]" /> Add Sibling
             </button>
@@ -96,6 +97,7 @@ const SidebarTree: React.FC = () => {
       </div>
 
       {showLibrary && <Library onClose={() => setShowLibrary(false)} />}
+      {showCsv && <CsvUpload onClose={() => setShowCsv(false)} />}
     </div>
   );
 };
