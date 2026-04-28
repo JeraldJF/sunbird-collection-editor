@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useEditorState, updateNodeMetadata } from '../../store/editorStore';
+import { useEditorState, updateNodeMetadata, setMode } from '../../store/editorStore';
 import DynamicForm from './DynamicForm';
 import type { FormField } from './DynamicForm';
-import { MdImage } from 'react-icons/md';
+import { MdImage, MdLibraryAdd } from 'react-icons/md';
 import AssetBrowser from '../library/AssetBrowser';
 
 const MetaForm: React.FC = () => {
@@ -43,12 +43,23 @@ const MetaForm: React.FC = () => {
     copyright: selectedNode.metadata?.copyright || '',
   };
 
+  const isCollection = selectedNode?.mimeType === 'application/vnd.ekstep.content-collection';
+
   return (
-    <div className="flex-1 bg-white p-6 overflow-auto">
+    <div className="flex-1 bg-white p-6 overflow-auto relative">
       <div className="max-w-6xl mx-auto">
         {/* Header Name */}
-        <div className="mb-10 text-xl font-medium text-gray-700">
-           {selectedNode.name}
+        <div className="mb-10 flex justify-between items-center">
+           <h2 className="text-xl font-medium text-gray-700">{selectedNode.name}</h2>
+           {isCollection && (
+              <button
+                onClick={() => setMode('library')}
+                className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-[#00529b] rounded-xl font-bold text-sm hover:bg-gray-200 transition-all"
+              >
+                <MdLibraryAdd size={20} />
+                Add from Library
+              </button>
+           )}
         </div>
         <div className="space-y-6">
              {/* Icon Section */}

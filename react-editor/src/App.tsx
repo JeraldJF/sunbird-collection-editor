@@ -30,8 +30,7 @@ function App() {
 
   if (!hierarchy) return <div className="p-10 text-center">Loading Editor...</div>;
 
-  const isFolder = selectedNode?.children !== undefined;
-  const isRoot = selectedNode?.root === true;
+  const isCollection = selectedNode?.mimeType === 'application/vnd.ekstep.content-collection';
 
   const getPlayerElement = (mimeType?: string) => {
     switch (mimeType) {
@@ -59,8 +58,8 @@ function App() {
       <div className="flex flex-1 overflow-hidden">
         <SidebarTree />
         <main className="flex-1 overflow-hidden bg-white border-l flex flex-col">
-          {!isFolder && !isRoot && selectedNode && (
-            <div className="flex-1 overflow-auto p-4 border-b bg-gray-100">
+          {!isCollection && selectedNode && (
+            <div className="shrink-0 p-4 border-b bg-gray-100">
               <SunbirdPlayer
                   playerElement={getPlayerElement(selectedNode.mimeType)}
                   playerConfig={{

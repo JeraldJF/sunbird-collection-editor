@@ -83,15 +83,6 @@ const SidebarTree: React.FC = () => {
                 <MdAdd size={16} className="text-[#00529b]" /> Add Child
             </button>
         </div>
-        <div className="px-3 border-l">
-          <button
-            onClick={() => setMode('library')}
-            className="flex items-center gap-1 px-2 py-1.5 text-primary hover:bg-primary-light rounded transition-all text-[11px] font-bold whitespace-nowrap"
-          >
-            <MdAdd size={14} />
-            Add from library
-          </button>
-        </div>
       </div>
 
       {showCsv && <CsvUpload onClose={() => setShowCsv(false)} />}
