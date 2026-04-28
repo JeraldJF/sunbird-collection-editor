@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MdSearch, MdAdd, MdClose } from 'react-icons/md';
 import { useEditorState, addNode } from '../../store/editorStore';
 import { v4 as uuidv4 } from 'uuid';
@@ -6,6 +6,14 @@ import { v4 as uuidv4 } from 'uuid';
 const Library: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const { selectedNode } = useEditorState();
+
+  useEffect(() => {
+    const handleEsc = (event: KeyboardEvent) => {
+       if (event.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [onClose]);
 
   const mockLibraryData = [
     { id: 'lib_1', name: 'Newton\'s Laws Video', primaryCategory: 'Explanation Content', mimeType: 'video/mp4' },
@@ -32,7 +40,7 @@ const Library: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             <h2 className="text-2xl font-bold text-gray-800">Add from Library</h2>
             <p className="text-sm text-gray-500">Search and add existing content to your collection</p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-200 rounded-full transition-colors">
+          <button onClick={onClose} className="p-2 hover:bg-gray-200 rounded-full transition-colors" aria-label="Close Library">
             <MdClose size={24} />
           </button>
         </div>

@@ -1,13 +1,15 @@
-import React from 'react';
-import { Tree, NodeApi } from 'react-arborist';
+import React, { useState } from 'react';
 import { useEditorState, setSelectedNode, addNode, deleteNode } from '../../store/editorStore';
-import { MdFolder, MdInsertDriveFile, MdChevronRight, MdKeyboardArrowDown, MdAdd, MdDelete } from 'react-icons/md';
+import { Tree, type NodeApi } from 'react-arborist';
+import { MdFolder, MdInsertDriveFile, MdChevronRight, MdKeyboardArrowDown, MdAdd, MdDelete, MdLibraryAdd } from 'react-icons/md';
 import { clsx } from 'clsx';
 import { v4 as uuidv4 } from 'uuid';
 import type { Node } from '../../types';
+import Library from '../library/Library';
 
 const SidebarTree: React.FC = () => {
   const { hierarchy } = useEditorState();
+  const [showLibrary, setShowLibrary] = useState(false);
 
   const data = hierarchy ? [hierarchy] : [];
 
@@ -21,7 +23,7 @@ const SidebarTree: React.FC = () => {
           initialData={data}
           openByDefault={true}
           width={300}
-          height={800}
+          height={600}
           indent={20}
           rowHeight={36}
           onSelect={(nodes) => {
@@ -33,6 +35,49 @@ const SidebarTree: React.FC = () => {
           {NodeRenderer}
         </Tree>
       </div>
+
+      <div className="p-4 bg-white border-t space-y-3">
+        <div className="flex gap-2">
+            <button
+                onClick={() => {
+                   const newUnit = {
+                        id: uuidv4(),
+                        name: 'New Unit',
+                        primaryCategory: 'Textbook Unit',
+                        mimeType: 'application/vnd.ekstep.content-collection',
+                        children: []
+                    };
+                    addNode(hierarchy?.id || 'root', newUnit);
+                }}
+                className="flex-1 flex items-center justify-center gap-1 px-3 py-2 border border-primary text-primary hover:bg-primary-light rounded-lg text-xs font-bold transition-all shadow-sm"
+            >
+                <MdAdd size={16} /> Unit
+            </button>
+            <button
+                onClick={() => {
+                   const newContent = {
+                        id: uuidv4(),
+                        name: 'New Content',
+                        primaryCategory: 'Learning Resource',
+                        mimeType: 'application/pdf',
+                    };
+                    addNode(hierarchy?.id || 'root', newContent);
+                }}
+                className="flex-1 flex items-center justify-center gap-1 px-3 py-2 border border-primary text-primary hover:bg-primary-light rounded-lg text-xs font-bold transition-all shadow-sm"
+            >
+                <MdAdd size={16} /> Content
+            </button>
+        </div>
+        <button
+          onClick={() => setShowLibrary(true)}
+          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-white hover:bg-primary-dark rounded-xl transition-all text-sm font-bold shadow-md active:scale-95"
+        >
+          <MdLibraryAdd size={18} />
+          Add from Library
+        </button>
+      </div>
+
+      {showLibrary && <Library onClose={() => setShowLibrary(false)} />}
     </div>
   );
 };
