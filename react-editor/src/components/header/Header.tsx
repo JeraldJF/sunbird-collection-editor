@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import { useEditorState } from '../../store/editorStore';
-import { MdSave, MdSend, MdPreview, MdArrowBack, MdTableChart, MdPeople } from 'react-icons/md';
+import { MdArrowBack, MdPeople, MdQrCode2, MdKeyboardArrowDown } from 'react-icons/md';
 import CsvUpload from '../library/CsvUpload';
 import CollaboratorModal from '../library/CollaboratorModal';
 
 const Header: React.FC = () => {
-  const { selectedNode, hierarchy } = useEditorState();
+  const { hierarchy } = useEditorState();
   const [showCsv, setShowCsv] = useState(false);
   const [showCollaborators, setShowCollaborators] = useState(false);
 
   return (
     <div className="flex flex-col w-full shadow-sm">
       {/* Top Bar */}
-      <div className="bg-primary px-6 py-2 flex items-center justify-between text-white">
+      <div className="bg-[#00529b] px-6 py-2 flex items-center justify-between text-white">
         <button className="flex items-center gap-2 hover:bg-white/10 px-3 py-1 rounded transition-colors text-sm font-medium">
           <MdArrowBack size={18} />
           Back
@@ -20,45 +20,34 @@ const Header: React.FC = () => {
       </div>
 
       {/* Main Toolbar */}
-      <div className="bg-white border-b px-6 py-4 flex items-center justify-between">
+      <div className="bg-white border-b px-6 py-3 flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-bold text-gray-800">
+          <h1 className="text-lg font-medium text-gray-800">
             {hierarchy?.name || 'Loading Editor...'}
           </h1>
-          {selectedNode && (
-            <p className="text-xs text-gray-500 mt-1">
-              Selected: <span className="font-semibold">{selectedNode.name}</span>
-            </p>
-          )}
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           <button
             onClick={() => setShowCollaborators(true)}
-            className="p-2.5 text-gray-400 hover:text-primary hover:bg-primary-light rounded-xl transition-all shadow-sm border"
+            className="p-1.5 text-blue-900 hover:bg-gray-100 rounded transition-all"
             title="Manage Collaborators"
           >
-            <MdPeople size={22} />
+            <MdPeople size={24} />
           </button>
-          <button
-            onClick={() => setShowCsv(true)}
-            className="flex items-center gap-2 px-4 py-2 border border-gray-200 text-gray-600 hover:bg-gray-50 rounded-xl transition-all text-sm font-bold shadow-sm"
-          >
-            <MdTableChart size={20} className="text-emerald-500" />
-            Bulk Actions
-          </button>
-          <div className="h-6 w-px bg-gray-200 mx-2" />
-          <button className="flex items-center gap-2 px-4 py-2 border border-primary text-primary hover:bg-primary-light rounded-xl transition-all text-sm font-bold shadow-sm">
-            <MdPreview size={20} />
-            Preview
-          </button>
-          <button className="flex items-center gap-2 px-4 py-2 border border-primary text-primary hover:bg-primary-light rounded-xl transition-all text-sm font-bold shadow-sm">
-            <MdSave size={20} />
-            Save Draft
-          </button>
-          <button className="flex items-center gap-2 px-6 py-2 bg-primary text-white hover:bg-primary-dark rounded-xl transition-all text-sm font-bold shadow-lg active:scale-95">
-            <MdSend size={20} />
-            Submit
+
+          <div className="relative group">
+            <button className="flex items-center gap-1 px-3 py-1.5 text-blue-900 hover:bg-gray-100 rounded transition-all text-sm font-medium">
+              <MdQrCode2 size={20} />
+              QR Code
+              <MdKeyboardArrowDown size={18} />
+            </button>
+          </div>
+
+          <div className="h-8 w-px bg-gray-300 mx-1" />
+
+          <button className="flex items-center gap-2 px-6 py-2 border-2 border-blue-600 text-blue-600 hover:bg-blue-50 rounded text-sm font-medium transition-all">
+            Save as Draft
           </button>
         </div>
       </div>

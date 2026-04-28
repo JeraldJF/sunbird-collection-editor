@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useEditorState, setSelectedNode, addNode, deleteNode } from '../../store/editorStore';
 import { Tree, type NodeApi } from 'react-arborist';
-import { MdFolder, MdInsertDriveFile, MdChevronRight, MdKeyboardArrowDown, MdAdd, MdDelete, MdLibraryAdd } from 'react-icons/md';
+import { MdFolder, MdInsertDriveFile, MdChevronRight, MdKeyboardArrowDown, MdAdd, MdDelete, MdMoreVert } from 'react-icons/md';
 import { clsx } from 'clsx';
 import { v4 as uuidv4 } from 'uuid';
 import type { Node } from '../../types';
@@ -14,9 +14,12 @@ const SidebarTree: React.FC = () => {
   const data = hierarchy ? [hierarchy] : [];
 
   return (
-    <div className="w-80 border-r bg-gray-50 h-full overflow-hidden flex flex-col">
+    <div className="w-64 border-r bg-gray-50 h-full overflow-hidden flex flex-col">
       <div className="p-4 border-b bg-white flex justify-between items-center">
-        <h2 className="text-sm font-bold uppercase tracking-wider text-gray-500">Structure</h2>
+        <h2 className="text-sm font-medium text-gray-700">Folders</h2>
+        <div className="text-[#00529b] cursor-pointer">
+          <MdMoreVert size={20} />
+        </div>
       </div>
       <div className="flex-1 overflow-auto p-2">
         <Tree<Node>
@@ -36,45 +39,60 @@ const SidebarTree: React.FC = () => {
         </Tree>
       </div>
 
-      <div className="p-4 bg-white border-t space-y-3">
-        <div className="flex gap-2">
+      <div className="bg-white border-t flex items-center h-14">
+        <div className="flex-1 flex divide-x border-r h-full">
             <button
                 onClick={() => {
-                   const newUnit = {
+                    const targetId = selectedNode?.id || hierarchy?.id;
+                    if (!targetId) return;
+
+                    // Logic to find parent for "Sibling"
+                    // For simplicity in this mock, we add to hierarchy root if nothing selected
+                    // In a real app, we'd traverse to find parent.
+                    const newUnit = {
                         id: uuidv4(),
                         name: 'New Unit',
                         primaryCategory: 'Textbook Unit',
                         mimeType: 'application/vnd.ekstep.content-collection',
                         children: []
                     };
+
+                    // Adding as sibling of selected or child of root
                     addNode(hierarchy?.id || 'root', newUnit);
                 }}
-                className="flex-1 flex items-center justify-center gap-1 px-3 py-2 border border-primary text-primary hover:bg-primary-light rounded-lg text-xs font-bold transition-all shadow-sm"
+                className="flex-1 flex items-center justify-center gap-1 px-2 text-[#00529b] hover:bg-gray-50 text-[11px] font-medium transition-all disabled:opacity-50"
+                disabled={!hierarchy}
             >
-                <MdAdd size={16} /> Unit
+                <MdAdd size={16} className="text-[#00529b]" /> Add Sibling
             </button>
             <button
                 onClick={() => {
+                   const targetId = selectedNode?.id || hierarchy?.id;
+                   if (!targetId) return;
+
                    const newContent = {
                         id: uuidv4(),
                         name: 'New Content',
                         primaryCategory: 'Learning Resource',
                         mimeType: 'application/pdf',
                     };
-                    addNode(hierarchy?.id || 'root', newContent);
+                    addNode(targetId, newContent);
                 }}
-                className="flex-1 flex items-center justify-center gap-1 px-3 py-2 border border-primary text-primary hover:bg-primary-light rounded-lg text-xs font-bold transition-all shadow-sm"
+                className="flex-1 flex items-center justify-center gap-1 px-2 text-[#00529b] hover:bg-gray-50 text-[11px] font-medium transition-all disabled:opacity-50"
+                disabled={!hierarchy}
             >
-                <MdAdd size={16} /> Content
+                <MdAdd size={16} className="text-[#00529b]" /> Add Child
             </button>
         </div>
-        <button
-          onClick={() => setShowLibrary(true)}
-          className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-white hover:bg-primary-dark rounded-xl transition-all text-sm font-bold shadow-md active:scale-95"
-        >
-          <MdLibraryAdd size={18} />
-          Add from Library
-        </button>
+        <div className="px-3">
+          <button
+            onClick={() => setShowLibrary(true)}
+            className="flex items-center gap-1 px-2 py-1.5 border border-gray-300 text-gray-500 hover:bg-gray-50 rounded transition-all text-[11px] font-medium whitespace-nowrap"
+          >
+            <MdAdd size={14} />
+            Add from library
+          </button>
+        </div>
       </div>
 
       {showLibrary && <Library onClose={() => setShowLibrary(false)} />}
