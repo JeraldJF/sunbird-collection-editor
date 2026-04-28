@@ -115,12 +115,12 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ config, defaultValues, onSubm
       <div className="flex justify-end pt-4 border-t mt-4">
         <button
           type="submit"
-          className="px-4 py-2 border border-gray-300 text-gray-500 hover:bg-gray-50 rounded transition-all text-xs font-medium"
+          className="px-6 py-2 bg-primary text-white hover:bg-primary-dark rounded-xl transition-all text-xs font-bold shadow-lg shadow-primary/20 flex items-center gap-2"
         >
-          <span className="flex items-center gap-1">
-             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-             Add from library
-          </span>
+           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+           </svg>
+           Save Metadata
         </button>
       </div>
     </form>

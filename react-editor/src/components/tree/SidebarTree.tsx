@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
-import { useEditorState, setSelectedNode, addNode, deleteNode, moveNode, addSibling } from '../../store/editorStore';
+import { useEditorState, setSelectedNode, addNode, deleteNode, moveNode, addSibling, setMode } from '../../store/editorStore';
 import { Tree, type NodeApi } from 'react-arborist';
 import { MdFolder, MdInsertDriveFile, MdChevronRight, MdKeyboardArrowDown, MdAdd, MdDelete, MdMoreVert } from 'react-icons/md';
 import { clsx } from 'clsx';
 import { v4 as uuidv4 } from 'uuid';
 import type { Node } from '../../types';
-import Library from '../library/Library';
 import CsvUpload from '../library/CsvUpload';
 
 const SidebarTree: React.FC = () => {
   const { hierarchy, selectedNode } = useEditorState();
-  const [showLibrary, setShowLibrary] = useState(false);
   const [showCsv, setShowCsv] = useState(false);
 
   const data = hierarchy ? [hierarchy] : [];
@@ -85,10 +83,10 @@ const SidebarTree: React.FC = () => {
                 <MdAdd size={16} className="text-[#00529b]" /> Add Child
             </button>
         </div>
-        <div className="px-3">
+        <div className="px-3 border-l">
           <button
-            onClick={() => setShowLibrary(true)}
-            className="flex items-center gap-1 px-2 py-1.5 border border-gray-300 text-gray-500 hover:bg-gray-50 rounded transition-all text-[11px] font-medium whitespace-nowrap"
+            onClick={() => setMode('library')}
+            className="flex items-center gap-1 px-2 py-1.5 text-primary hover:bg-primary-light rounded transition-all text-[11px] font-bold whitespace-nowrap"
           >
             <MdAdd size={14} />
             Add from library
@@ -96,7 +94,6 @@ const SidebarTree: React.FC = () => {
         </div>
       </div>
 
-      {showLibrary && <Library onClose={() => setShowLibrary(false)} />}
       {showCsv && <CsvUpload onClose={() => setShowCsv(false)} />}
     </div>
   );

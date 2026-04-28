@@ -40,18 +40,25 @@ const SunbirdPlayer: React.FC<PlayerProps> = ({ playerConfig, playerElement }) =
   }, [playerConfig, playerElement]);
 
   return (
-    <div className="w-full h-full bg-gray-900 flex items-center justify-center rounded-2xl overflow-hidden shadow-2xl border-4 border-gray-800 ring-8 ring-gray-50/50">
-      <div ref={containerRef} className="w-full h-full min-h-[500px]">
+    <div className="w-full h-full bg-slate-900 flex items-center justify-center rounded-xl overflow-hidden shadow-xl border border-slate-800">
+      <div ref={containerRef} className="w-full h-full min-h-[400px] relative">
          {/* Web component will be mounted here */}
-         <div className="flex flex-col items-center justify-center h-full text-gray-500 gap-4 bg-gradient-to-b from-gray-800 to-gray-900">
-            <div className="p-4 bg-gray-700/50 rounded-2xl animate-pulse">
-                <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                </svg>
+         <div className="flex flex-col items-center justify-center h-full text-slate-400 gap-6 bg-slate-900">
+            <div className="relative">
+                <div className="absolute inset-0 bg-primary/20 rounded-full blur-2xl animate-pulse"></div>
+                <div className="relative p-6 bg-slate-800 rounded-3xl border border-slate-700 shadow-2xl">
+                    <svg className="w-16 h-16 text-primary" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                    </svg>
+                </div>
             </div>
-            <div className="text-center">
-                <p className="font-black uppercase tracking-widest text-xs opacity-40">Initializing Player</p>
-                <p className="text-[10px] mt-1 opacity-30">{playerElement}</p>
+            <div className="text-center space-y-2">
+                <h3 className="text-xl font-bold text-slate-200">Content Preview</h3>
+                <p className="text-sm font-medium text-slate-500 uppercase tracking-[0.2em]">{playerConfig?.metadata?.name || 'Loading Asset...'}</p>
+            </div>
+            <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between text-[10px] text-slate-600 font-mono">
+                <span>ID: {playerConfig?.metadata?.identifier || 'TEMP_ID'}</span>
+                <span>ELEMENT: {playerElement}</span>
             </div>
          </div>
       </div>

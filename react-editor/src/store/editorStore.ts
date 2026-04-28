@@ -6,15 +6,21 @@ interface EditorState {
   hierarchy: Node | null;
   selectedNode: Node | null;
   config: EditorConfig | null;
+  mode: 'edit' | 'library';
 }
 
 export const editorStore = new Store<EditorState>({
   hierarchy: null,
   selectedNode: null,
   config: null,
+  mode: 'edit',
 });
 
 export const useEditorState = () => useStore(editorStore);
+
+export const setMode = (mode: 'edit' | 'library') => {
+  editorStore.setState((state) => ({ ...state, mode }));
+};
 
 export const setHierarchy = (hierarchy: Node) => {
   editorStore.setState((state) => ({ ...state, hierarchy }));
