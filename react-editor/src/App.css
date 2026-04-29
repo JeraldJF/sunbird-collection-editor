@@ -1,0 +1,6 @@
+/* Base styles if needed, otherwise tailwind handles most things */
+#root {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
