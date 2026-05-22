@@ -2,6 +2,7 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { MdSave } from 'react-icons/md';
 
 export interface FormField {
   code: string;
@@ -53,30 +54,32 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ config, defaultValues, onSubm
   }, [isValid, onStatusChange]);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5">
         {config.map(field => {
             if (!field.editable && field.inputType !== 'nestedselect') return null;
-            const isFullWidth = field.inputType === 'textarea' || field.code === 'keywords';
+            const isFullWidth = field.inputType === 'textarea' || field.code === 'keywords' || field.code === 'name';
 
             return (
-            <div key={field.code} className={isFullWidth ? "md:col-span-2" : ""}>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                {field.name} {field.required && <span className="text-red-500">*</span>}
-                </label>
+            <div key={field.code} className={`space-y-1.5 ${isFullWidth ? "md:col-span-2" : ""}`}>
+                <div className="flex justify-between items-center">
+                  <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-wider">
+                    {field.name} {field.required && <span className="text-red-500">*</span>}
+                  </label>
+                </div>
 
                 {field.inputType === 'textarea' ? (
                 <textarea
                     {...register(field.code)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:border-blue-500 outline-none transition-all resize-none text-sm"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#004a92] focus:border-[#004a92] outline-none transition-all resize-none text-sm bg-white"
                     placeholder={field.placeholder}
-                    rows={3}
+                    rows={4}
                 />
                 ) : field.inputType === 'select' ? (
                 <div className="relative">
                     <select
                         {...register(field.code)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded focus:border-blue-500 outline-none transition-all text-sm appearance-none bg-white"
+                        className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#004a92] focus:border-[#004a92] outline-none transition-all text-sm appearance-none bg-white"
                     >
                         <option value="">Select {field.name}</option>
                         {(field.range || field.terms || []).map((opt: any) => (
@@ -85,19 +88,19 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ config, defaultValues, onSubm
                         </option>
                         ))}
                     </select>
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
                 </div>
                 ) : field.inputType === 'checkbox' ? (
-                    <div className="flex items-center gap-3">
-                        <input type="checkbox" {...register(field.code)} className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
+                    <div className="flex items-center gap-3 py-2">
+                        <input type="checkbox" {...register(field.code)} className="w-4 h-4 text-[#004a92] border-gray-300 rounded focus:ring-[#004a92]" />
                         <span className="text-sm text-gray-600">Enable {field.name}</span>
                     </div>
                 ) : (
                 <input
                     {...register(field.code)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded focus:border-blue-500 outline-none transition-all text-sm"
+                    className="w-full px-3 py-2 border border-gray-300 rounded focus:ring-1 focus:ring-[#004a92] focus:border-[#004a92] outline-none transition-all text-sm bg-white"
                     placeholder={field.placeholder}
                 />
                 )}
@@ -112,14 +115,12 @@ const DynamicForm: React.FC<DynamicFormProps> = ({ config, defaultValues, onSubm
         })}
       </div>
 
-      <div className="flex justify-end pt-4 border-t mt-4">
+      <div className="flex justify-end pt-6 border-t">
         <button
           type="submit"
-          className="px-6 py-2 bg-primary text-white hover:bg-primary-dark rounded-xl transition-all text-xs font-bold shadow-lg shadow-primary/20 flex items-center gap-2"
+          className="px-8 py-2.5 bg-[#004a92] text-white hover:bg-[#003d7a] rounded font-bold text-sm transition-all shadow-sm flex items-center gap-2"
         >
-           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-           </svg>
+           <MdSave size={18} />
            Save Metadata
         </button>
       </div>

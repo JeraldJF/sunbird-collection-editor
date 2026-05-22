@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useEditorState, setSelectedNode, addNode, deleteNode, moveNode, addSibling, setMode } from '../../store/editorStore';
+import { useEditorState, setSelectedNode, addNode, deleteNode, moveNode, addSibling } from '../../store/editorStore';
 import { Tree, type NodeApi } from 'react-arborist';
-import { MdFolder, MdInsertDriveFile, MdChevronRight, MdKeyboardArrowDown, MdAdd, MdDelete, MdMoreVert } from 'react-icons/md';
+import { MdChevronRight, MdKeyboardArrowDown, MdAdd, MdDelete, MdMoreVert, MdBook, MdFolderOpen, MdDescription } from 'react-icons/md';
 import { clsx } from 'clsx';
 import { v4 as uuidv4 } from 'uuid';
 import type { Node } from '../../types';
@@ -14,21 +14,21 @@ const SidebarTree: React.FC = () => {
   const data = hierarchy ? [hierarchy] : [];
 
   return (
-    <div className="w-64 border-r bg-gray-50 h-full overflow-hidden flex flex-col">
-      <div className="p-4 border-b bg-white flex justify-between items-center">
-        <h2 className="text-sm font-medium text-gray-700">Folders</h2>
-        <div className="text-[#00529b] cursor-pointer" onClick={() => setShowCsv(true)}>
-          <MdMoreVert size={20} />
+    <div className="w-80 border-r bg-white h-full overflow-hidden flex flex-col shadow-sm">
+      <div className="p-4 border-b bg-white flex justify-between items-center h-[64px]">
+        <h2 className="text-lg font-medium text-gray-700 ml-2">Folders</h2>
+        <div className="text-[#00529b] cursor-pointer p-2 hover:bg-gray-100 rounded-full transition-colors" onClick={() => setShowCsv(true)}>
+          <MdMoreVert size={24} />
         </div>
       </div>
-      <div className="flex-1 overflow-auto p-2">
+      <div className="flex-1 overflow-hidden py-4">
         <Tree<Node>
           data={data}
           openByDefault={true}
-          width={300}
-          height={600}
-          indent={20}
-          rowHeight={36}
+          width={320}
+          height={800} // Set a reasonable default or use ResizeObserver for full responsiveness
+          indent={24}
+          rowHeight={40}
           onSelect={(nodes) => {
             if (nodes.length > 0) {
               setSelectedNode(nodes[0].data);
@@ -42,8 +42,7 @@ const SidebarTree: React.FC = () => {
         </Tree>
       </div>
 
-      <div className="bg-white border-t flex items-center h-14">
-        <div className="flex-1 flex divide-x border-r h-full">
+      <div className="bg-white border-t flex items-center h-16 px-4 gap-2">
             <button
                 onClick={() => {
                     const referenceId = selectedNode?.id;
@@ -59,10 +58,10 @@ const SidebarTree: React.FC = () => {
 
                     addSibling(referenceId, newUnit);
                 }}
-                className="flex-1 flex items-center justify-center gap-1 px-2 text-[#00529b] hover:bg-gray-50 text-[11px] font-medium transition-all disabled:opacity-50"
+                className="flex-1 flex items-center justify-center gap-2 h-10 border border-gray-200 rounded text-[#00529b] hover:bg-gray-50 text-sm font-medium transition-all disabled:opacity-50"
                 disabled={!selectedNode || selectedNode.id === hierarchy?.id}
             >
-                <MdAdd size={16} className="text-[#00529b]" /> Add Sibling
+                <MdAdd size={20} /> Add Sibling
             </button>
             <button
                 onClick={() => {
@@ -77,12 +76,11 @@ const SidebarTree: React.FC = () => {
                     };
                     addNode(targetId, newContent);
                 }}
-                className="flex-1 flex items-center justify-center gap-1 px-2 text-[#00529b] hover:bg-gray-50 text-[11px] font-medium transition-all disabled:opacity-50"
+                className="flex-1 flex items-center justify-center gap-2 h-10 border border-gray-200 rounded text-[#00529b] hover:bg-gray-50 text-sm font-medium transition-all disabled:opacity-50"
                 disabled={!hierarchy}
             >
-                <MdAdd size={16} className="text-[#00529b]" /> Add Child
+                <MdAdd size={20} /> Add Child
             </button>
-        </div>
       </div>
 
       {showCsv && <CsvUpload onClose={() => setShowCsv(false)} />}
@@ -92,34 +90,12 @@ const SidebarTree: React.FC = () => {
 
 const NodeRenderer = ({ node, style, dragHandle }: { node: NodeApi<Node>, style: React.CSSProperties, dragHandle?: any }) => {
   const isSelected = node.isSelected;
-  const isFolder = !node.isLeaf;
-
-  const handleAddUnit = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const newUnit = {
-        id: uuidv4(),
-        name: 'New Unit',
-        primaryCategory: 'Textbook Unit',
-        mimeType: 'application/vnd.ekstep.content-collection',
-        children: []
-    };
-    addNode(node.data.id, newUnit);
-  };
-
-  const handleAddContent = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const newContent = {
-        id: uuidv4(),
-        name: 'New Content',
-        primaryCategory: 'Learning Resource',
-        mimeType: 'application/pdf',
-    };
-    addNode(node.data.id, newContent);
-  };
+  const isRoot = node.data.root;
+  const isCollection = node.data.mimeType === 'application/vnd.ekstep.content-collection';
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (node.data.root) return;
+    if (isRoot) return;
     deleteNode(node.data.id);
   };
 
@@ -128,55 +104,45 @@ const NodeRenderer = ({ node, style, dragHandle }: { node: NodeApi<Node>, style:
       style={style}
       ref={dragHandle}
       className={clsx(
-        "group flex items-center gap-1 px-2 rounded-md cursor-pointer transition-colors",
-        isSelected ? "bg-primary-light text-primary font-medium" : "hover:bg-gray-200 text-gray-700"
+        "group flex items-center gap-2 px-4 cursor-pointer transition-all border-l-4",
+        isSelected ? "bg-[#f0f7ff] text-[#004a92] font-semibold border-[#004a92]" : "hover:bg-gray-50 text-gray-700 border-transparent"
       )}
       onClick={() => {
         node.select();
-        if (isFolder && !node.isOpen) {
+        if (isCollection && !node.isOpen) {
             node.open();
         }
       }}
     >
       <div className="w-4 flex items-center justify-center">
-        {isFolder && (
+        {isCollection && node.children && node.children.length > 0 && (
           <button
             onClick={(e) => {
               e.stopPropagation();
               node.toggle();
             }}
-            className="hover:bg-gray-300 rounded p-0.5"
+            className="hover:bg-gray-200 rounded p-0.5"
           >
-            {node.isOpen ? <MdKeyboardArrowDown /> : <MdChevronRight />}
+            {node.isOpen ? <MdKeyboardArrowDown size={18} /> : <MdChevronRight size={18} />}
           </button>
         )}
       </div>
 
-      <span className={clsx(isSelected ? "text-primary" : "text-gray-400")}>
-        {isFolder ? <MdFolder size={18} /> : <MdInsertDriveFile size={18} />}
+      <span className={clsx(isSelected ? "text-[#004a92]" : "text-gray-500")}>
+        {isRoot ? <MdBook size={20} /> : (isCollection ? <MdFolderOpen size={20} /> : <MdDescription size={20} />)}
       </span>
 
-      <span className="truncate text-sm flex-1">
+      <span className="truncate text-sm flex-1 ml-1">
         {node.data.name}
       </span>
 
-      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-        {isFolder && (
-            <>
-                <button onClick={handleAddUnit} title="Add Unit" className="p-1 hover:bg-white rounded text-blue-500 shadow-sm border">
-                    <MdAdd size={14} />
-                </button>
-                <button onClick={handleAddContent} title="Add Content" className="p-1 hover:bg-white rounded text-green-500 shadow-sm border">
-                    <MdInsertDriveFile size={14} />
-                </button>
-            </>
-        )}
-        {!node.data.root && (
-            <button onClick={handleDelete} title="Delete" className="p-1 hover:bg-white rounded text-red-500 shadow-sm border">
-                <MdDelete size={14} />
+      {!isRoot && (
+        <div className="flex items-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <button onClick={handleDelete} title="Delete" className="p-1 hover:text-red-500 text-gray-400">
+                <MdDelete size={18} />
             </button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -76,68 +76,81 @@ const Library: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-white font-sans antialiased text-gray-900">
+    <div className="flex flex-col h-screen bg-[#edf4f9] font-sans antialiased text-gray-900">
         {/* Header */}
-        <div className="bg-[#00529b] px-6 py-4 flex items-center gap-4 text-white">
-            <button onClick={() => setMode('edit')} className="p-2 hover:bg-white/10 rounded transition-colors flex items-center gap-2">
-                <MdArrowBack size={24} />
-                <span className="font-bold">Back</span>
-            </button>
-            <h1 className="text-xl font-bold">Add from Library</h1>
+        <div className="bg-[#004a92] px-4 py-3 flex items-center justify-between text-white shadow-md">
+            <div className="flex items-center gap-4">
+                <button onClick={() => setMode('edit')} className="p-1 hover:bg-white/10 rounded transition-colors">
+                    <MdArrowBack size={24} />
+                </button>
+                <h1 className="text-lg font-semibold">Add from Library</h1>
+            </div>
+            <div className="flex items-center gap-4 flex-1 max-w-2xl px-8">
+                <div className="relative flex-1">
+                    <MdSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                    <input
+                        type="text"
+                        placeholder="Search Library"
+                        className="w-full pl-10 pr-4 py-2 rounded-md border-none focus:ring-2 focus:ring-white/20 outline-none transition-all text-sm text-gray-800"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+                <button className="text-sm font-medium flex items-center gap-1 hover:underline whitespace-nowrap">
+                    Change Filters <span className="text-[10px]">▼</span>
+                </button>
+            </div>
         </div>
 
         <div className="flex flex-1 overflow-hidden">
             {/* Left Column: Search and List */}
-            <div className="w-1/3 border-r flex flex-col bg-gray-50">
-                <div className="p-4 border-b bg-white">
-                    <div className="relative">
-                        <MdSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                        <input
-                            type="text"
-                            placeholder="Search content..."
-                            className="w-full pl-10 pr-4 py-2 border rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
+            <div className="w-[400px] flex flex-col bg-[#edf4f9] p-4">
+                <div className="flex justify-between items-start mb-4">
+                    <div className="flex flex-col">
+                        <h2 className="text-[#004a92] font-bold text-lg">Showing ({filteredData.length}) most relevant content</h2>
+                        <p className="text-xs text-gray-500">Use search and filters above to find more content</p>
+                    </div>
+                    <div className="flex flex-col items-end gap-1">
+                        <span className="text-xs font-medium text-gray-600">Sort By</span>
+                        <select className="text-xs border rounded px-2 py-1 bg-white outline-none">
+                            <option>A - Z</option>
+                            <option>Newest</option>
+                        </select>
                     </div>
                 </div>
-                <div className="flex-1 overflow-auto p-2 space-y-2">
+
+                <div className="flex items-center gap-2 mb-4">
+                    <div className="w-10 h-5 bg-gray-300 rounded-full relative cursor-pointer">
+                        <div className="absolute left-1 top-1 w-3 h-3 bg-white rounded-full"></div>
+                    </div>
+                    <span className="text-xs font-medium text-gray-700">Show content added to collection</span>
+                </div>
+
+                <div className="flex-1 overflow-auto space-y-px rounded-md border border-gray-200 shadow-sm bg-white">
                     {filteredData.map(item => (
                         <div
                             key={item.id}
                             onClick={() => setSelectedLibraryItem(item)}
                             className={clsx(
-                                "p-3 rounded-xl cursor-pointer transition-all border",
+                                "p-4 cursor-pointer transition-all border-b last:border-b-0 flex flex-col gap-2",
                                 selectedLibraryItem?.id === item.id
-                                    ? "bg-primary-light border-primary"
-                                    : "bg-white border-transparent hover:border-gray-200"
+                                    ? "bg-[#f8faff] border-l-4 border-l-[#004a92]"
+                                    : "bg-white border-l-4 border-l-transparent hover:bg-gray-50"
                             )}
                         >
-                            <div className="flex items-center gap-3">
-                                <div className={clsx(
-                                    "p-2 rounded-lg shrink-0",
-                                    item.mimeType === 'video/mp4' ? "bg-red-50 text-red-600" : "bg-blue-50 text-blue-600"
-                                )}>
-                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        {item.mimeType === 'video/mp4' ? (
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                                        ) : (
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                        )}
-                                    </svg>
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <h4 className="font-bold text-gray-900 text-sm truncate">{item.name}</h4>
-                                    <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">{item.primaryCategory}</span>
+                            <div className="flex justify-between items-start">
+                                <div className="flex-1 min-w-0 pr-2">
+                                    <h4 className="font-bold text-[#004a92] text-sm truncate">{item.name}</h4>
                                 </div>
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         handleAdd(item);
                                     }}
-                                    className="p-1.5 hover:bg-white rounded-lg text-primary shadow-sm border border-transparent hover:border-gray-200"
+                                    className="shrink-0 flex items-center gap-1 px-3 py-1 bg-[#008840] text-white rounded text-xs font-bold hover:bg-[#007035] transition-colors"
                                 >
-                                    <MdAdd size={20} />
+                                    <MdAdd size={14} />
+                                    Select content
                                 </button>
                             </div>
                         </div>
@@ -146,34 +159,33 @@ const Library: React.FC = () => {
             </div>
 
             {/* Right Column: Preview */}
-            <div className="flex-1 bg-white flex flex-col">
+            <div className="flex-1 bg-white flex flex-col m-4 rounded-md shadow-sm overflow-hidden border border-gray-200">
                 {selectedLibraryItem ? (
-                    <div className="flex-1 flex flex-col p-6">
-                        <div className="flex justify-between items-start mb-6">
-                            <div>
-                                <h2 className="text-2xl font-black text-gray-900">{selectedLibraryItem.name}</h2>
-                                <p className="text-sm text-gray-500 mt-1">{selectedLibraryItem.primaryCategory}</p>
-                            </div>
+                    <div className="flex-1 flex flex-col">
+                        <div className="flex justify-between items-center p-4 border-b bg-gray-50">
+                            <h2 className="text-xl font-bold text-[#004a92] truncate">{selectedLibraryItem.name}</h2>
                             <button
                                 onClick={() => handleAdd(selectedLibraryItem)}
-                                className="flex items-center gap-2 px-8 py-3 bg-primary text-white rounded-2xl font-bold shadow-lg shadow-primary/25 hover:scale-105 active:scale-95 transition-all"
+                                className="flex items-center gap-1 px-4 py-2 bg-[#008840] text-white rounded font-bold shadow-sm hover:bg-[#007035] transition-all text-sm"
                             >
-                                <MdAdd size={24} />
-                                Add to Collection
+                                <MdAdd size={18} />
+                                Select content
                             </button>
                         </div>
-                        <div className="flex-1 bg-gray-100 rounded-3xl overflow-hidden shadow-inner flex items-center justify-center border-4 border-gray-50">
-                            <SunbirdPlayer
-                                playerElement={getPlayerElement(selectedLibraryItem.mimeType)}
-                                playerConfig={{
-                                    context: {},
-                                    config: {},
-                                    metadata: {
-                                        ...selectedLibraryItem,
-                                        ...selectedLibraryItem.metadata
-                                    }
-                                }}
-                            />
+                        <div className="flex-1 bg-white flex items-center justify-center p-8">
+                            <div className="w-full h-full max-w-5xl border shadow-lg rounded overflow-hidden">
+                                <SunbirdPlayer
+                                    playerElement={getPlayerElement(selectedLibraryItem.mimeType)}
+                                    playerConfig={{
+                                        context: {},
+                                        config: {},
+                                        metadata: {
+                                            ...selectedLibraryItem,
+                                            ...selectedLibraryItem.metadata
+                                        }
+                                    }}
+                                />
+                            </div>
                         </div>
                     </div>
                 ) : (

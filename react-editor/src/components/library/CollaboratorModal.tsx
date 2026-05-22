@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { MdClose, MdPersonAdd, MdDelete, MdSearch } from 'react-icons/md';
+import { MdClose, MdSearch, MdArrowDropDown } from 'react-icons/md';
 
 const CollaboratorModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+  const [activeTab, setActiveTab] = useState<'add' | 'manage'>('add');
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
@@ -13,62 +14,94 @@ const CollaboratorModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   }, [onClose]);
 
   const collaborators = [
-    { id: '1', name: 'Amit Kumar', role: 'Reviewer', email: 'amit@example.com' },
-    { id: '2', name: 'Sarah Jones', role: 'Editor', email: 'sarah@example.com' },
+    { id: '1', name: 'ContentCreator2', org: 'Sunbird Org', initial: 'C' },
+    { id: '2', name: 'Content Creator', org: 'Sunbird Org', initial: 'C' },
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="bg-white w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[80vh]">
-        <div className="p-6 border-b flex items-center justify-between bg-gray-50">
-          <div>
-            <h2 className="text-xl font-bold text-gray-800">Manage Collaborators</h2>
-            <p className="text-xs text-gray-500 mt-1">Add or remove people who can edit this collection</p>
-          </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-200 rounded-full transition-colors">
-            <MdClose size={20} />
-          </button>
-        </div>
-
-        <div className="p-6 border-b space-y-4">
-          <div className="flex gap-3">
-             <div className="flex-1 relative">
-                <MdSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
-                <input
-                    type="text"
-                    placeholder="Search by name or email"
-                    className="w-full pl-12 pr-4 py-3 border rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all text-sm"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                />
-             </div>
-             <button className="px-6 bg-primary text-white rounded-2xl font-bold text-sm shadow-md hover:bg-primary-dark transition-all flex items-center gap-2">
-                <MdPersonAdd size={18} />
-                Add
-             </button>
+    <div className="fixed inset-0 z-[100] flex flex-col bg-white">
+      {/* Header */}
+      <div className="bg-[#004a92] text-white p-4 flex items-center justify-between shadow-md relative">
+        <h2 className="text-xl font-medium px-4">Collaborators</h2>
+        <div className="flex items-center gap-4 flex-1 max-w-xl justify-end">
+          <div className="relative w-64">
+            <input
+              type="text"
+              placeholder="Search..."
+              className="w-full bg-white text-gray-800 pl-4 pr-10 py-1.5 rounded text-sm outline-none"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <MdSearch className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500" size={20} />
           </div>
         </div>
+        <button onClick={onClose} className="ml-4 p-1 hover:bg-white/10 rounded transition-colors self-start absolute top-2 right-2">
+          <MdClose size={24} />
+        </button>
+      </div>
 
-        <div className="flex-1 overflow-auto p-6">
-          <div className="space-y-3">
+      {/* Content Area */}
+      <div className="flex-1 bg-[#f0f7ff] flex flex-col overflow-hidden">
+        {/* Tabs */}
+        <div className="bg-white px-8 pt-6 border-b border-gray-200">
+           <div className="flex gap-8">
+              <button
+                onClick={() => setActiveTab('add')}
+                className={`pb-2 px-1 text-base transition-all relative ${activeTab === 'add' ? 'text-[#004a92] font-semibold border-b-2 border-[#004a92]' : 'text-gray-600 hover:text-gray-800'}`}
+              >
+                Add Collaborators
+              </button>
+              <button
+                onClick={() => setActiveTab('manage')}
+                className={`pb-2 px-1 text-base transition-all relative ${activeTab === 'manage' ? 'text-[#004a92] font-semibold border-b-2 border-[#004a92]' : 'text-gray-600 hover:text-gray-800'}`}
+              >
+                Manage Collaborators
+              </button>
+           </div>
+        </div>
+
+        {/* Results Info and Sort */}
+        <div className="px-8 py-4 flex justify-between items-center">
+           <div className="text-gray-700 font-medium">
+              Showing {collaborators.length} out of {collaborators.length}
+           </div>
+           <div className="flex items-center bg-white border border-gray-300 rounded px-3 py-1 cursor-pointer">
+              <span className="text-sm text-gray-700">Sort By</span>
+              <MdArrowDropDown size={20} className="text-gray-500" />
+           </div>
+        </div>
+
+        {/* Cards Grid */}
+        <div className="flex-1 overflow-auto px-8 pb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {collaborators.map(person => (
-              <div key={person.id} className="flex items-center justify-between p-4 border border-gray-100 rounded-2xl hover:bg-gray-50 transition-all shadow-sm">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-primary-light text-primary font-black rounded-xl flex items-center justify-center text-lg shadow-inner">
-                    {person.name.charAt(0)}
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-gray-800">{person.name}</h4>
-                    <p className="text-xs text-gray-500">{person.email} • <span className="font-bold text-primary">{person.role}</span></p>
+              <div key={person.id} className="bg-white border border-gray-200 p-4 rounded shadow-sm hover:shadow-md transition-all flex items-start gap-4">
+                <div className="w-14 h-14 bg-[#2e4a62] text-white rounded-full flex items-center justify-center text-2xl font-bold flex-shrink-0">
+                  {person.initial}
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-bold text-gray-800 text-sm">{person.name}</h4>
+                  <p className="text-xs text-gray-500 mt-0.5">{person.org}</p>
+                  <div className="mt-4 flex justify-end">
+                    <button className="text-[#004a92] text-sm font-bold flex items-center gap-1 hover:underline">
+                      <span className="text-lg">+</span> Add
+                    </button>
                   </div>
                 </div>
-                <button className="p-2.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all">
-                  <MdDelete size={20} />
-                </button>
               </div>
             ))}
           </div>
         </div>
+      </div>
+
+      {/* Footer */}
+      <div className="bg-[#f0f7ff] p-4 border-t border-gray-200 flex justify-end">
+         <button
+            onClick={onClose}
+            className="bg-[#cccccc] text-white px-8 py-2 rounded font-medium hover:bg-gray-400 transition-colors"
+         >
+            Done
+         </button>
       </div>
     </div>
   );

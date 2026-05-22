@@ -20,53 +20,56 @@ const AssetBrowser: React.FC<{ onClose: () => void, onSelect: (url: string) => v
   ];
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-md p-4">
-      <div className="bg-white w-full max-w-3xl rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
-        <div className="p-6 border-b flex items-center justify-between bg-gray-50">
-          <div>
-            <h2 className="text-xl font-black text-gray-800 uppercase tracking-widest">Select Asset</h2>
-            <p className="text-xs text-gray-500 mt-1 font-bold">Choose an icon for your collection</p>
-          </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-200 rounded-full transition-colors shadow-sm bg-white border">
-            <MdClose size={20} />
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 p-4">
+      <div className="bg-white w-full max-w-4xl rounded shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        <div className="px-6 py-4 border-b flex items-center justify-between bg-[#004a92] text-white">
+          <h2 className="text-lg font-bold">Select Asset</h2>
+          <button onClick={onClose} className="p-1 hover:bg-white/10 rounded transition-colors">
+            <MdClose size={24} />
           </button>
         </div>
 
-        <div className="p-6 border-b flex gap-4 bg-white">
+        <div className="p-6 border-b flex gap-4 bg-gray-50 items-center">
           <div className="flex-1 relative">
-            <MdSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+            <MdSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
             <input
               type="text"
               placeholder="Search assets..."
-              className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all font-bold text-sm"
+              className="w-full pl-10 pr-4 py-2 border rounded focus:ring-1 focus:ring-[#004a92] outline-none text-sm"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <button className="px-6 bg-white border-2 border-dashed border-gray-200 text-gray-400 rounded-2xl font-black text-xs uppercase tracking-widest hover:border-primary hover:text-primary transition-all flex items-center gap-2">
+          <button className="px-4 py-2 bg-white border border-[#004a92] text-[#004a92] rounded font-bold text-sm hover:bg-blue-50 transition-all flex items-center gap-2">
             <MdCloudUpload size={18} />
             Upload New
           </button>
         </div>
 
-        <div className="flex-1 overflow-auto p-8 bg-gray-50/30">
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+        <div className="flex-1 overflow-auto p-6">
+          <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-6">
             {mockAssets.map(asset => (
               <div
                 key={asset.id}
-                className="group cursor-pointer space-y-3"
+                className="group cursor-pointer flex flex-col gap-2"
                 onClick={() => {
                   onSelect(asset.url);
                   onClose();
                 }}
               >
-                <div className="aspect-square bg-white border-2 border-white rounded-2xl shadow-sm overflow-hidden group-hover:shadow-xl group-hover:ring-4 group-hover:ring-primary/20 transition-all">
-                  <img src={asset.url} alt={asset.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                <div className="aspect-square bg-white border rounded overflow-hidden group-hover:border-[#004a92] transition-all relative">
+                  <img src={asset.url} alt={asset.name} className="w-full h-full object-cover" />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-all" />
                 </div>
-                <p className="text-[10px] font-black text-center text-gray-400 uppercase tracking-widest group-hover:text-primary transition-colors">{asset.name}</p>
+                <p className="text-xs font-medium text-center text-gray-600 truncate">{asset.name}</p>
               </div>
             ))}
           </div>
+        </div>
+        <div className="p-4 border-t bg-gray-50 flex justify-end">
+           <button onClick={onClose} className="px-6 py-2 border border-gray-300 bg-white rounded font-bold text-sm hover:bg-gray-100 transition-all">
+             Cancel
+           </button>
         </div>
       </div>
     </div>
